@@ -14,7 +14,7 @@ gnuplot multiplicative.plt
 以下のLangevin方程式を考える。
 
 $$
-\dot{x} = -x + hat{R}
+\dot{x} = -x + \hat{R}
 $$
 
 ただし、$\hat{R}$は
