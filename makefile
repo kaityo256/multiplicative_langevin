@@ -5,6 +5,11 @@ all: a.out
 a.out: langevin.cpp
 	g++ -O3 -std=c++11 $<
 
+graph:
+	gnuplot additive.plt
+	gnuplot multiplicative.plt
+	gnuplot twostep.plt
+
 
 pdf:
 	pandoc README.md -s -o README.pdf $(PANDOC_TEXOPT)

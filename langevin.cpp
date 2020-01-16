@@ -6,6 +6,9 @@
 #include <string>
 #include <vector>
 
+const int N = 10000000;
+const int NAVE = 10000;
+
 std::vector<double> normal_langevin() {
   std::mt19937 mt;
   const double dt = 0.01;
@@ -13,7 +16,6 @@ std::vector<double> normal_langevin() {
   double t = 0.0;
   std::vector<double> data;
   std::normal_distribution<double> nd(0.0, sqrt(2.0 * dt));
-  const int N = 100000;
   for (int i = 0; i < N; i++) {
     x += -x * dt;
     x += nd(mt);
@@ -30,9 +32,25 @@ std::vector<double> multiplicative_langevin() {
   double t = 0.0;
   std::vector<double> data;
   std::normal_distribution<double> nd(0.0, sqrt(2.0 * dt));
-  const int N = 100000;
   for (int i = 0; i < N; i++) {
     x += -x * x * x * dt;
+    x += x * nd(mt1);
+    x += nd(mt2);
+    t += dt;
+    data.push_back(x);
+  }
+  return data;
+}
+
+std::vector<double> multiplicative_twostep() {
+  std::mt19937 mt1(1), mt2(2);
+  const double dt = 0.01;
+  double x = 0.0;
+  double t = 0.0;
+  std::vector<double> data;
+  std::normal_distribution<double> nd(0.0, sqrt(2.0 * dt));
+  for (int i = 0; i < N; i++) {
+    x += -(x * x * x - x) * dt;
     x += x * nd(mt1);
     x += nd(mt2);
     t += dt;
@@ -45,7 +63,6 @@ void plot(std::vector<double> data, std::string filename) {
   const int N = data.size();
   std::sort(data.begin(), data.end());
   std::vector<double> xv, yv;
-  const int NAVE = 100;
   for (int i = 0; i < N / NAVE; i++) {
     double x = 0.0;
     double y = 0.0;
@@ -69,4 +86,5 @@ void plot(std::vector<double> data, std::string filename) {
 int main() {
   plot(normal_langevin(), "additive.dat");
   plot(multiplicative_langevin(), "multiplicative.dat");
+  plot(multiplicative_twostep(), "twostep.dat");
 }
