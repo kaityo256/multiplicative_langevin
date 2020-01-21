@@ -7,8 +7,9 @@ a.out: langevin.cpp
 
 graph:
 	gnuplot additive.plt
-	gnuplot multiplicative.plt
-	gnuplot twostep.plt
+	gnuplot pc.plt
+	gnuplot stratonovich.plt
+	gnuplot milstein.plt
 
 
 pdf:

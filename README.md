@@ -5,8 +5,7 @@
 ```sh
 make
 ./a.out
-gnuplot additive.plt
-gnuplot multiplicative.plt
+make graph
 ```
 
 ## Additive Noise
@@ -118,21 +117,25 @@ $$
 f_{eq} = C^{-1} \frac{\mathrm{e}^{-x^2/2} }{\sqrt{1+x^2}}
 $$
 
-となる。ただし$C\sim 1.98$である。実際に計算するとItoに一致する。
+となる。ただし$C\sim 1.98$である。先程のLangevin方程式をEuler-Maruyamaで計算すると、定常状態はItoに一致する。
 
-![multiplicative.png](multiplicative.png)
+![ito.png](ito.png)
 
-## Two-step法
+## Milstein法
 
-Two-step法を用いると、もとのLangevin方程式をStratonovichに変換することができる。
+運動方程式をMilstein法で更新すると、Stratonovichに一致する。
 
-元のLangevin方程式が
+![milstein.png](milstein.png)
 
-$$
-\dot{x} = -x^3 + x\hat{R}_1 + \hat{R}_2
-$$
+## Predictor-Corrector Method
 
-で与えられる時、Two-step法を適用すると、
+運動方程式をPredictor-Corrector法で更新すると、Stratonovichに一致する。
+
+![pc.png](pc.png)
+
+## Stratonovich + Euler-Maruyama
+
+先程のLangevin方程式は、以下のようにしてStratonovich表現に変換できる。
 
 $$
 \dot{x} = -x^3 + x+ x\hat{R}_1 + \hat{R}_2
@@ -140,17 +143,8 @@ $$
 
 に変形される。これをそのままEuler-Maruyama法で時間発展させた時の定常分布は、
 
-* Two-step法適用前のLangevin方程式をStratonovichだと思った場合の定常分布
-* Two-step法適用後のLangevin方程式をItoだと思った場合の定常分布
-
-にそれぞれ一致する。
-
-![twostep.png](twostep.png)
+![stratonovich.png](twostep.png)
 
 ## まとめ
 
-確率微分方程式、特にノイズが変数依存性を持つようなmultiplicative noise系にEuler-Maruyama法を適用すると、分布関数の時間発展は元のLangevin方程式をItoだと思った場合のFocker-Planck方程式に従う。Two-step法を適用すると、Ito表記で記述されたLangevin方程式がStratonovich表記に変換される。
-
-関係を図示すると以下の通り。
-
-![relation.png](relation.png)
+確率微分方程式、特にノイズが変数依存性を持つようなmultiplicative noise系では、対応するFocker-Planck方程式がItoとStratonovichで異なる。Langevin方程式にEuler-Maruyama法を適用すると、Itoの分布に収束する。Milstein法やPredictor-CorrectorはStratonovich解釈に基づいているため、分布もStratonovich解釈の分布になる。また、Langevin方程式をStratonivich解釈だと思ってIto解釈に変換すると、Euler-Maruyama法を適用した場合に、変換前をStratonovich解釈した場合のFPE、変換後をIto解釈した場合のFPEに一致する。
