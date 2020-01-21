@@ -143,7 +143,7 @@ $$
 
 に変形される。これをそのままEuler-Maruyama法で時間発展させた時の定常分布は、
 
-![stratonovich.png](twostep.png)
+![stratonovich.png](stratonovich.png)
 
 ## まとめ
 

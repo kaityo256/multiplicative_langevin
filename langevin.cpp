@@ -18,8 +18,9 @@ std::vector<double> additive() {
   std::vector<double> data;
   std::normal_distribution<double> nd(0.0, sqrt(2.0 * dt));
   for (int i = 0; i < N; i++) {
+    double w = nd(mt);
     x += -x * dt;
-    x += nd(mt);
+    x += w;
     t += dt;
     data.push_back(x);
   }
@@ -35,9 +36,11 @@ std::vector<double> multiplicative_ito() {
   std::vector<double> data;
   std::normal_distribution<double> nd(0.0, sqrt(2.0 * dt));
   for (int i = 0; i < N; i++) {
+    double w1 = nd(mt1);
+    double w2 = nd(mt2);
     x += -x * x * x * dt;
-    x += x * nd(mt1);
-    x += nd(mt2);
+    x += x * w1;
+    x += w2;
     t += dt;
     data.push_back(x);
   }
