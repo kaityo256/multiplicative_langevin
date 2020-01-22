@@ -12,16 +12,16 @@ const int NAVE = 10000;
 // Euler-Maruyama for additive noise
 std::vector<double> additive() {
   std::mt19937 mt;
-  const double dt = 0.01;
+  const double h = 0.01;
   double x = 0.0;
   double t = 0.0;
   std::vector<double> data;
-  std::normal_distribution<double> nd(0.0, sqrt(2.0 * dt));
+  std::normal_distribution<double> nd(0.0, sqrt(2.0 * h));
   for (int i = 0; i < N; i++) {
     double w = nd(mt);
-    x += -x * dt;
+    x += -x * h;
     x += w;
-    t += dt;
+    t += h;
     data.push_back(x);
   }
   return data;
@@ -30,18 +30,18 @@ std::vector<double> additive() {
 // Euler-Maruyama with Ito prescription
 std::vector<double> multiplicative_ito() {
   std::mt19937 mt1(1), mt2(2);
-  const double dt = 0.01;
+  const double h = 0.01;
   double x = 0.0;
   double t = 0.0;
   std::vector<double> data;
-  std::normal_distribution<double> nd(0.0, sqrt(2.0 * dt));
+  std::normal_distribution<double> nd(0.0, sqrt(2.0 * h));
   for (int i = 0; i < N; i++) {
     double w1 = nd(mt1);
     double w2 = nd(mt2);
-    x += -x * x * x * dt;
+    x += -x * x * x * h;
     x += x * w1;
     x += w2;
-    t += dt;
+    t += h;
     data.push_back(x);
   }
   return data;
@@ -50,18 +50,18 @@ std::vector<double> multiplicative_ito() {
 // Euler-Maruyama with Stratonovich prescription
 std::vector<double> multiplicative_stratonovich() {
   std::mt19937 mt1(1), mt2(2);
-  const double dt = 0.01;
+  const double h = 0.01;
   double x = 0.0;
   double t = 0.0;
   std::vector<double> data;
-  std::normal_distribution<double> nd(0.0, sqrt(2.0 * dt));
+  std::normal_distribution<double> nd(0.0, sqrt(2.0 * h));
   for (int i = 0; i < N; i++) {
     double w1 = nd(mt1);
     double w2 = nd(mt2);
-    x += -(x * x * x - x) * dt;
+    x += -(x * x * x - x) * h;
     x += x * w1;
     x += w2;
-    t += dt;
+    t += h;
     data.push_back(x);
   }
   return data;
@@ -70,39 +70,38 @@ std::vector<double> multiplicative_stratonovich() {
 // Milstein method
 std::vector<double> multiplicative_milstein() {
   std::mt19937 mt1(1), mt2(2);
-  const double dt = 0.01;
+  const double h = 0.01;
   double x = 0.0;
   double t = 0.0;
   std::vector<double> data;
-  std::normal_distribution<double> nd(0.0, sqrt(2.0 * dt));
+  std::normal_distribution<double> nd(0.0, sqrt(2.0 * h));
   for (int i = 0; i < N; i++) {
     double w1 = nd(mt1);
     double w2 = nd(mt2);
-    x += (-x * x * x) * dt;
+    x += (-x * x * x) * h;
     x += x * w1;
     x += 0.5 * x * w1 * w1;
     x += w2;
-    t += dt;
+    t += h;
     data.push_back(x);
   }
   return data;
 }
 
-// Predictor-Corrector method
-// Identical to Hein method since g(x) is linear
-std::vector<double> multiplicative_pc() {
+// Two-step scheme
+std::vector<double> multiplicative_twostep() {
   std::mt19937 mt1(1), mt2(2);
-  const double dt = 0.01;
+  const double h = 0.01;
   double x = 0.0;
   double t = 0.0;
   std::vector<double> data;
-  std::normal_distribution<double> nd(0.0, sqrt(2.0 * dt));
+  std::normal_distribution<double> nd(0.0, sqrt(2.0 * h));
   for (int i = 0; i < N; i++) {
     double w1 = nd(mt1);
     double w2 = nd(mt2);
-    double x_i = x + (-x * x * x) * dt + x * w1 + w2;
-    x = x + (-x * x * x) * dt + (x + x_i) * 0.5 * w1 + w2;
-    t += dt;
+    double x_i = x + (-x * x * x) * h + x * w1 + w2;
+    x = x + (-x * x * x) * h + (x + x_i) * 0.5 * w1 + w2;
+    t += h;
     data.push_back(x);
   }
   return data;
@@ -138,5 +137,5 @@ int main() {
   plot(multiplicative_ito(), "ito.dat");
   plot(multiplicative_stratonovich(), "stratonovich.dat");
   plot(multiplicative_milstein(), "milstein.dat");
-  plot(multiplicative_pc(), "pc.dat");
+  plot(multiplicative_twostep(), "twostep.dat");
 }
